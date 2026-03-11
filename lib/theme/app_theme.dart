@@ -3,49 +3,69 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  static const Color primary = Color(0xFFEC4899);
-  static const Color secondary = Color(0xFF7C3AED);
-  static const Color accent = Color(0xFFF59E0B);
-  static const Color surface = Color(0xFFFFF0F6);
+  // Circlo — Warm Social Palette
+  static const Color primary = Color(0xFFFF6B6B);
+  static const Color primaryDark = Color(0xFFE85555);
+  static const Color secondary = Color(0xFF1A1A2E);
+  static const Color accent = Color(0xFF4ECDC4);
+  static const Color surface = Color(0xFFFFF8F0);
+  static const Color cardBg = Color(0xFFFFFFFF);
+  static const Color textPrimary = Color(0xFF1A1A2E);
+  static const Color textSecondary = Color(0xFF8E8E93);
+  static const Color divider = Color(0xFFF0EDE8);
+  static const Color warning = Color(0xFFFFB84D);
+  static const Color success = Color(0xFF51CF66);
 
-  static LinearGradient get heroGradient => const LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFFEC4899), Color(0xFF7C3AED)],
-  );
-
-  static LinearGradient get storyGradient => const LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFFF97316), Color(0xFFEC4899), Color(0xFF7C3AED)],
-  );
-
-  static List<BoxShadow> get cardShadow => [
-    BoxShadow(color: primary.withOpacity(0.12), blurRadius: 16, offset: const Offset(0, 4)),
+  static const List<Color> storyColors = [
+    Color(0xFFFF6B6B),
+    Color(0xFF4ECDC4),
+    Color(0xFFFFB84D),
+    Color(0xFF845EC2),
+    Color(0xFFFF9671),
+    Color(0xFF00C9A7),
+    Color(0xFFFFC75F),
+    Color(0xFFD65DB1),
   ];
 
-  static List<BoxShadow> get softShadow => [
-    BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 2)),
+  static List<BoxShadow> get cardShadow => [
+    BoxShadow(
+      color: const Color(0xFF1A1A2E).withOpacity(0.04),
+      blurRadius: 12,
+      offset: const Offset(0, 2),
+    ),
   ];
 
   static ThemeData get lightTheme {
-    final base = ThemeData(
+    return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: primary, surface: surface),
-    );
-    return base.copyWith(
-      scaffoldBackgroundColor: surface,
-      textTheme: base.textTheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-        titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.black),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primary,
+        brightness: Brightness.light,
+        primary: primary,
+        secondary: secondary,
+        surface: surface,
       ),
-      navigationBarTheme: NavigationBarThemeData(
+      scaffoldBackgroundColor: surface,
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,
-        indicatorColor: primary.withOpacity(0.12),
-        labelTextStyle: WidgetStateProperty.all(TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
+        foregroundColor: textPrimary,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w800,
+          color: textPrimary,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+        ),
       ),
     );
   }
