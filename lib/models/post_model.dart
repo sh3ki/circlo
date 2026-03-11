@@ -3,6 +3,7 @@ class CircloUser {
   final String username;
   final String displayName;
   final String avatar;
+  final String? avatarUrl;
   final int followers;
   final int following;
   final int postCount;
@@ -14,6 +15,7 @@ class CircloUser {
     required this.username,
     required this.displayName,
     required this.avatar,
+    this.avatarUrl,
     this.followers = 0,
     this.following = 0,
     this.postCount = 0,
@@ -25,10 +27,11 @@ class CircloUser {
 class Post {
   final String id;
   final CircloUser author;
+  final String category;
   final String content;
-  final String emoji;
   final List<String> tags;
   final DateTime timestamp;
+  final String? imageUrl;
   int likes;
   int comments;
   int shares;
@@ -38,10 +41,11 @@ class Post {
   Post({
     required this.id,
     required this.author,
+    required this.category,
     required this.content,
-    required this.emoji,
     this.tags = const [],
     required this.timestamp,
+    this.imageUrl,
     this.likes = 0,
     this.comments = 0,
     this.shares = 0,
@@ -53,7 +57,7 @@ class Post {
 class AppNotification {
   final String id;
   final CircloUser from;
-  final String type; // like, comment, follow, mention
+  final String type;
   final String message;
   final DateTime timestamp;
   bool isRead;
@@ -66,14 +70,4 @@ class AppNotification {
     required this.timestamp,
     this.isRead = false,
   });
-
-  String get icon {
-    switch (type) {
-      case 'like': return '❤️';
-      case 'comment': return '💬';
-      case 'follow': return '👤';
-      case 'mention': return '@';
-      default: return '🔔';
-    }
-  }
 }
