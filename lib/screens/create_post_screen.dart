@@ -10,24 +10,69 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _captionCtrl = TextEditingController();
-  String _selectedEmoji = '🌸';
+  String _selectedCategory = 'General';
   final Set<String> _selectedTags = {};
   bool _posted = false;
 
-  static const _emojis = ['🌸', '🎨', '✈️', '🍕', '💪', '📸', '🎵', '🌿', '🚀', '📚', '🌅', '🎭', '🏔️', '🐾', '💻', '🧘'];
-  static const _tagSuggestions = ['photography', 'travel', 'food', 'fitness', 'art', 'tech', 'books', 'wellness', 'music', 'nature'];
+  static const _categories = [
+    'General',
+    'Art',
+    'Travel',
+    'Food',
+    'Fitness',
+    'Tech',
+    'Photography',
+    'Books',
+    'Wellness'
+  ];
+
+  static const _tagSuggestions = [
+    'photography',
+    'travel',
+    'food',
+    'fitness',
+    'art',
+    'tech',
+    'books',
+    'wellness',
+    'music',
+    'nature'
+  ];
 
   @override
-  void dispose() { _captionCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _captionCtrl.dispose();
+    super.dispose();
+  }
 
   void _post() {
     if (_captionCtrl.text.trim().isEmpty) return;
     setState(() => _posted = true);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('Posted to Circlo! 🌸'), backgroundColor: AppTheme.primary, behavior: SnackBarBehavior.floating),
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded,
+                color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            const Text('Posted to Circlo!',
+                style: TextStyle(fontWeight: FontWeight.w600)),
+          ],
+        ),
+        backgroundColor: AppTheme.accent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
     Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) setState(() { _posted = false; _captionCtrl.clear(); _selectedTags.clear(); _selectedEmoji = '🌸'; });
+      if (mounted) {
+        setState(() {
+          _posted = false;
+          _captionCtrl.clear();
+          _selectedTags.clear();
+          _selectedCategory = 'General';
+        });
+      }
     });
   }
 
@@ -35,80 +80,223 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surface,
-      appBar: AppBar(title: const Text('Create Post'), actions: [
-        TextButton(onPressed: _post, child: ShaderMask(
-          shaderCallback: (b) => AppTheme.heroGradient.createShader(b),
-          child: const Text('Share', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
-        )),
-      ]),
-      body: SingleChildScrollView(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Center(child: Container(
-          width: 120, height: 120,
-          decoration: BoxDecoration(gradient: LinearGradient(colors: [AppTheme.primary.withOpacity(0.15), AppTheme.secondary.withOpacity(0.15)]), borderRadius: BorderRadius.circular(24)),
-          child: Center(child: Text(_selectedEmoji, style: const TextStyle(fontSize: 64))),
-        )),
-        const SizedBox(height: 16),
-        const Text('Choose a cover emoji', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-        const SizedBox(height: 8),
-        SizedBox(height: 52, child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: _emojis.length,
-          itemBuilder: (_, i) => GestureDetector(
-            onTap: () => setState(() => _selectedEmoji = _emojis[i]),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 44, height: 44,
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                color: _selectedEmoji == _emojis[i] ? AppTheme.primary.withOpacity(0.2) : Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: _selectedEmoji == _emojis[i] ? AppTheme.primary : Colors.grey.shade200),
+      appBar: AppBar(
+        title: const Text('Create Post'),
+        scrolledUnderElevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: TextButton(
+              onPressed: _post,
+              style: TextButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               ),
-              child: Center(child: Text(_emojis[i], style: const TextStyle(fontSize: 22))),
+              child: const Text('Share',
+                  style:
+                      TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
             ),
           ),
-        )),
-        const SizedBox(height: 20),
-        TextField(
-          controller: _captionCtrl,
-          maxLines: 5,
-          decoration: InputDecoration(
-            hintText: "What's on your mind?",
-            filled: true, fillColor: Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-          ),
-        ),
-        const SizedBox(height: 20),
-        const Text('Add Tags', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-        const SizedBox(height: 10),
-        Wrap(spacing: 8, runSpacing: 8, children: _tagSuggestions.map((tag) {
-          final sel = _selectedTags.contains(tag);
-          return GestureDetector(
-            onTap: () => setState(() => sel ? _selectedTags.remove(tag) : _selectedTags.add(tag)),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image upload area
+            Container(
+              width: double.infinity,
+              height: 200,
               decoration: BoxDecoration(
-                gradient: sel ? AppTheme.heroGradient : null,
-                color: sel ? null : Colors.white,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: sel ? Colors.transparent : Colors.grey.shade200),
+                border: Border.all(
+                  color: AppTheme.divider,
+                  width: 2,
+                  strokeAlign: BorderSide.strokeAlignCenter,
+                ),
               ),
-              child: Text('#$tag', style: TextStyle(color: sel ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 13)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(Icons.add_photo_alternate_rounded,
+                        color: AppTheme.primary, size: 28),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Add a photo',
+                    style: TextStyle(
+                      color: AppTheme.textPrimary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Tap to upload from gallery',
+                    style: TextStyle(
+                      color: AppTheme.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          );
-        }).toList()),
-        const SizedBox(height: 32),
-        SizedBox(width: double.infinity, child: DecoratedBox(
-          decoration: BoxDecoration(gradient: AppTheme.heroGradient, borderRadius: BorderRadius.circular(16)),
-          child: ElevatedButton(
-            onPressed: _post,
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, shadowColor: Colors.transparent, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-            child: Text(_posted ? 'Posted! 🌸' : 'Share Post', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
-          ),
-        )),
-        const SizedBox(height: 20),
-      ])),
+
+            const SizedBox(height: 20),
+
+            // Category selector
+            const Text(
+              'Category',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 38,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _categories.length,
+                itemBuilder: (_, i) {
+                  final sel = _selectedCategory == _categories[i];
+                  return GestureDetector(
+                    onTap: () =>
+                        setState(() => _selectedCategory = _categories[i]),
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: sel ? AppTheme.primary : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: sel ? AppTheme.primary : AppTheme.divider,
+                        ),
+                      ),
+                      child: Text(
+                        _categories[i],
+                        style: TextStyle(
+                          color: sel ? Colors.white : AppTheme.textSecondary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Caption
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: AppTheme.cardShadow,
+              ),
+              child: TextField(
+                controller: _captionCtrl,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: "What's on your mind?",
+                  hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Tags
+            const Text(
+              'Add Tags',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _tagSuggestions.map((tag) {
+                final sel = _selectedTags.contains(tag);
+                return GestureDetector(
+                  onTap: () => setState(() {
+                    sel
+                        ? _selectedTags.remove(tag)
+                        : _selectedTags.add(tag);
+                  }),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: sel ? AppTheme.accent : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: sel ? AppTheme.accent : AppTheme.divider,
+                      ),
+                    ),
+                    child: Text(
+                      '#$tag',
+                      style: TextStyle(
+                        color: sel ? Colors.white : AppTheme.textSecondary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Share button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _post,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: Text(
+                  _posted ? 'Posted!' : 'Share Post',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
     );
   }
 }
